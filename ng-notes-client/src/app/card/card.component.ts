@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component } from '@angular/core';
 import CardService from '../card-service';
 import Card from '../models/card';
 
@@ -21,7 +21,7 @@ import Card from '../models/card';
 export default class CardComponent {
   // component data/logic goes here
 
-  cards: Card[] = []
+  cards: Card[] = [];
 
   constructor(private cardService: CardService) {
   }

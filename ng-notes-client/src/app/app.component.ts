@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   selector: 'app-root',
 
   // a component needs a template... you can provide it inline
-  //template: '<p class="something">the {{title}} template</p>',
+  // template: '<p class="something">the {{title}} template</p>',
   // or in a separate file
   templateUrl: './app.component.html',
 

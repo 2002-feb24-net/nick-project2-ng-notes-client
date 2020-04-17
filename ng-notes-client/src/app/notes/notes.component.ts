@@ -10,7 +10,7 @@ import { FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./notes.component.css']
 })
 export class NotesComponent implements OnInit {
-  notes: Note[] = []
+  notes: Note[] = [];
   error: string | undefined;
 
   createNoteForm = this.formBuilder.group({
@@ -57,7 +57,7 @@ export class NotesComponent implements OnInit {
     }
     // return an observable with a user-facing error message
     // this.error = 'Something bad happened; please try again later.';
-  };
+  }
 
   resetError() {
     this.error = undefined;

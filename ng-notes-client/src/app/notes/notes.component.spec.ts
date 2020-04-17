@@ -9,7 +9,7 @@ describe('NotesComponent', () => {
   let fixture: ComponentFixture<NotesComponent>;
 
   // stub service which pretends to fetch a list of 0 notes
-  let notesApiStub = { getNotes: () => Promise.resolve([]) };
+  const notesApiStub = { getNotes: () => Promise.resolve([]) };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
