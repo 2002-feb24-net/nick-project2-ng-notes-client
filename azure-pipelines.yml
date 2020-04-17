@@ -1,0 +1,72 @@
+trigger:
+- master
+
+pr:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  appDir: ng-notes-client
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: 12.x
+  displayName: node 12.x
+
+# npm install:
+#   1. reads the package.json
+#   2. looks at what's already in node_modules, and doesn't upgrade what is already OK
+#   3. downloads anything that needs upgrading into node_modules
+#   4. updates/creates a "manifest file" package-lock.json
+
+# npm ci:
+#   1. ignores package.json
+#   2. deletes everything in node_modules
+#   3. downloads exactly what package-lock.json says (deterministic build)
+- script: npm ci
+  workingDirectory: $(appDir)
+  displayName: npm install
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: sonarcloud-escalonn
+    organization: 2002-feb24-net
+    scannerMode: CLI
+    configMode: manual
+    cliProjectKey: 2002-feb24-net_nick-project2-ng-notes-client
+    cliProjectName: nick-project2-ng-notes-client
+    cliSources: $(appDir)/src
+    extraProperties: |
+      sonar.coverage.exclusions=**/*.spec.ts
+      sonar.typescript.lcov.reportPaths=$(appDir)/coverage/$(appDir)/lcov.info
+  displayName: sonarcloud analysis prepare
+
+- script: npx ng build --prod
+  workingDirectory: $(appDir)
+  displayName: ng build
+
+- script: npx ng test --browsers ChromeHeadless --no-watch --code-coverage
+  workingDirectory: $(appDir)
+  displayName: ng test
+
+- script: npm run lint
+  workingDirectory: $(appDir)
+  displayName: ng lint
+
+- task: SonarCloudAnalyze@1
+  displayName: sonarcloud analysis run
+
+- task: SonarCloudPublish@1
+  displayName: sonarcloud results build publish
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: AzureRM
+    azureSubscription: Pay-As-You-Go(0518cd5b-d389-4983-9496-cdcae31dcc60)
+    appType: webApp
+    WebAppName: 1909nickproject2angular
+    packageForLinux: $(appDir)/dist/*
+  displayName: azure app service deploy
