@@ -6,7 +6,7 @@ import Card from './models/card';
 // communicates with Deck of Cards API (https://deckofcardsapi.com/)
 // to implement some card operations
 @Injectable()
-export default class CardService {
+export class CardService {
   currentDeckId: string | null = null;
 
   constructor(private http: HttpClient) { }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import CardService from '../card-service';
+import { CardService } from '../card.service';
 import Card from '../models/card';
 
 // in angular, a component manages one part of the page (a view)
@@ -18,7 +18,7 @@ import Card from '../models/card';
   `,
   providers: []
 })
-export default class CardComponent {
+export class CardComponent {
   // component data/logic goes here
 
   cards: Card[] = [];
