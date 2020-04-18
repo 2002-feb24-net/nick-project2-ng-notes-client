@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { NotesApiService } from '../notes-api.service';
-import Note from '../models/note';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
+import { NotesApiService } from '../notes-api.service';
+import Note from '../models/note';
 
 @Component({
   selector: 'app-notes',
@@ -23,13 +23,7 @@ export class NotesComponent implements OnInit {
     private formBuilder: FormBuilder
   ) { }
 
-  // any setup that expects data binding to be wired up, etc.
-  // needs to be in here.
-  // ngOnInit is a "lifecycle hook"
   ngOnInit(): void {
-    // once the DOM is ready, i want to send my http requests
-    // and eventually put the notes into the property and thus
-    // via data binding, the DOM.
     this.getNotes();
   }
 
@@ -65,7 +59,7 @@ export class NotesComponent implements OnInit {
 
   createNote() {
     const newNote: Note = {
-      isPublic: true,
+      authorId: this.notesApi.defaultUserId,
       text: this.createNoteForm.get('text')?.value
     };
     this.notesApi.createNote(newNote)

@@ -8,7 +8,7 @@ import Note from './models/note';
 })
 export class NotesApiService {
   private baseUrl = environment.notesApiBaseUrl;
-  private defaultUserId = 1; // Angular client
+  get defaultUserId() { return 1; } // Angular client
 
   constructor(private http: HttpClient) { }
 
@@ -18,10 +18,6 @@ export class NotesApiService {
   }
 
   createNote(note: Note) {
-    if (!note.authorId)
-    {
-      note.authorId = this.defaultUserId;
-    }
     return this.http.post<Note>(`${this.baseUrl}api/notes`, note)
       .toPromise();
   }
