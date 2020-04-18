@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import Note from './models/note';
 import { environment } from 'src/environments/environment';
+import Note from './models/note';
 
-// the providedIn line makes this global singleton by default
-// ...but every injectable needs at least @Injectable()
 @Injectable({
   providedIn: 'root'
 })
 export class NotesApiService {
-  baseUrl = environment.notesApiBaseUrl;
+  private baseUrl = environment.notesApiBaseUrl;
+  private defaultUserId = 1; // Angular client
 
   constructor(private http: HttpClient) { }
 
@@ -19,6 +18,10 @@ export class NotesApiService {
   }
 
   createNote(note: Note) {
+    if (!note.authorId)
+    {
+      note.authorId = this.defaultUserId;
+    }
     return this.http.post<Note>(`${this.baseUrl}api/notes`, note)
       .toPromise();
   }

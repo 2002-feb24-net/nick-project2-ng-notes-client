@@ -1,6 +1,6 @@
 export default interface Note {
   id?: number;
-  isPublic: boolean;
+  authorId: number;
   text?: string;
   dateModified?: Date;
 }
