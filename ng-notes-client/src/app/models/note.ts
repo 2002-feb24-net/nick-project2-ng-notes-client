@@ -3,4 +3,5 @@ export default interface Note {
   authorId: number;
   text?: string;
   dateModified?: Date;
+  tags: string[];
 }
