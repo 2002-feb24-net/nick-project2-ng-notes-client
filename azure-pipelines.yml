@@ -37,15 +37,6 @@ stages:
       artifact: app
       displayName: artifact publish app
 
-    - task: AzureRmWebAppDeployment@4
-      inputs:
-        ConnectionType: AzureRM
-        azureSubscription: Pay-As-You-Go(0518cd5b-d389-4983-9496-cdcae31dcc60)
-        appType: webApp
-        WebAppName: 2002-ng-notes-client
-        packageForLinux: $(appDir)/dist/*
-      displayName: azure app service deploy
-
   - job: test
 
     pool:
