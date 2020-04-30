@@ -58,9 +58,10 @@ export class NotesComponent implements OnInit {
   }
 
   createNote() {
+    const text = this.createNoteForm.get('text');
     const newNote: Note = {
       authorId: this.notesApi.defaultUserId,
-      text: this.createNoteForm.get('text')?.value,
+      text: text ? text.value : undefined,
       tags: []
     };
     this.notesApi.createNote(newNote)
