@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+
+  web:
+    build: ng-notes-client
+    image: nicholasescalona/2002-ng-notes-client:1.0
+    ports:
+      - 80:80
+    networks:
+      - default
+
+networks:
+  default:

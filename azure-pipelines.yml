@@ -9,7 +9,7 @@ stages:
 - stage: build
 
   variables:
-    nodeVersion: 13.x
+    nodeVersion: 12.x
     appDir: ng-notes-client
 
   jobs:
@@ -20,22 +20,13 @@ stages:
       vmImage: ubuntu-latest
 
     steps:
-    - task: NodeTool@0
+
+    - task: DockerCompose@0
       inputs:
-        versionSpec: $(nodeVersion)
-      displayName: node $(nodeVersion)
-
-    - script: npm ci
-      workingDirectory: $(appDir)
-      displayName: npm install
-
-    - script: npx ng build --outputPath $(Build.ArtifactStagingDirectory)/app --prod
-      workingDirectory: $(appDir)
-      displayName: ng build
-
-    - publish: $(Build.ArtifactStagingDirectory)/app
-      artifact: app
-      displayName: artifact publish app
+        containerregistrytype: 'Container Registry'
+        dockerComposeFile: 'docker-compose.prod.yml'
+        action: 'Build services'
+      displayName: docker-compose build
 
   - job: test
 
@@ -43,9 +34,10 @@ stages:
       vmImage: ubuntu-latest
 
     steps:
+
     - task: NodeTool@0
       inputs:
-        versionSpec: $(nodeVersion)
+        versionSpec: '$(nodeVersion)'
       displayName: node $(nodeVersion)
 
     - script: npm ci
@@ -54,13 +46,13 @@ stages:
 
     - task: SonarCloudPrepare@1
       inputs:
-        SonarCloud: sonarcloud-escalonn
-        organization: 2002-feb24-net
-        scannerMode: CLI
-        configMode: manual
-        cliProjectKey: 2002-feb24-net_nick-project2-ng-notes-client
-        cliProjectName: nick-project2-ng-notes-client
-        cliSources: $(appDir)/src
+        SonarCloud: 'sonarcloud-escalonn'
+        organization: '2002-feb24-net'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: '2002-feb24-net_nick-project2-ng-notes-client'
+        cliProjectName: 'nick-project2-ng-notes-client'
+        cliSources: '$(appDir)/src'
         extraProperties: |
           sonar.coverage.exclusions=**/*.spec.ts
           sonar.typescript.lcov.reportPaths=$(appDir)/coverage/$(appDir)/lcov.info
@@ -68,18 +60,18 @@ stages:
 
     - script: npx ng test --browsers ChromeHeadless --no-watch --code-coverage
       workingDirectory: $(appDir)
-      continueOnError: true
       displayName: ng test
 
     - script: npm run lint
       workingDirectory: $(appDir)
-      continueOnError: true
       displayName: ng lint
 
     - task: SonarCloudAnalyze@1
       displayName: sonarcloud analysis run
 
     - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
       displayName: sonarcloud results build publish
 
 - stage: deploy
@@ -100,15 +92,28 @@ stages:
         deploy:
           steps:
 
-          - download: current
-            artifact: app
-            displayName: artifact download app
+          - checkout: self
 
-          - task: AzureRmWebAppDeployment@4
+          - download: none
+
+          - task: DockerCompose@0
             inputs:
-              ConnectionType: AzureRM
-              azureSubscription: Pay-As-You-Go(0518cd5b-d389-4983-9496-cdcae31dcc60)
-              appType: webApp
-              WebAppName: 2002-ng-notes-client
-              packageForLinux: $(Pipeline.Workspace)/app
+              containerregistrytype: 'Container Registry'
+              dockerComposeFile: 'docker-compose.prod.yml'
+              action: 'Build services'
+            displayName: docker-compose build
+
+          - task: DockerCompose@0
+            inputs:
+              containerregistrytype: 'Container Registry'
+              dockerRegistryEndpoint: 'dockerhub-nicholasescalona'
+              dockerComposeFile: 'docker-compose.prod.yml'
+              action: 'Push services'
+            displayName: docker-compose push
+
+          - task: AzureWebAppContainer@1
+            inputs:
+              azureSubscription: 'Pay-As-You-Go(0518cd5b-d389-4983-9496-cdcae31dcc60)'
+              appName: '2002-ng-notes-client-docker'
+              multicontainerConfigFile: 'docker-compose.prod.yml'
             displayName: azure app service deploy
