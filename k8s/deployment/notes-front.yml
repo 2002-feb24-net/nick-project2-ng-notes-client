@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-front
+  labels:
+    app: notes
+    role: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes
+      role: front
+  template:
+    metadata:
+      labels:
+        app: notes
+        role: front
+    spec:
+      containers:
+      - name: notes-front
+        image: nicholasescalona/2002-ng-notes-client:1.0
+        ports:
+        - containerPort: 80

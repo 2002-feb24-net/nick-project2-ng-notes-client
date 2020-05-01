@@ -4,8 +4,10 @@
 
 export const environment = {
   production: false,
-  notesApiBaseUrl: 'https://localhost:44308/',
+  // notesApiBaseUrl: 'https://localhost:44308/'
   // notesApiBaseUrl: 'https://2002-ng-notes-client.azurewebsites.net/'
+  notesApiBaseUrl: 'https://2002-notes-api-docker.azurewebsites.net/'
+  // notesApiBaseUrl: 'http://20.45.6.216/'
 };
 
 /*
