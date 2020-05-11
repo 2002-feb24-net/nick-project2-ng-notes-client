@@ -20,5 +20,6 @@ spec:
       containers:
       - name: notes-front
         image: nicholasescalona/2002-ng-notes-client:1.0
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
